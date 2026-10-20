@@ -1,0 +1,48 @@
+[project]
+name = "open-vrm-vtuber-backend"
+version = "1.0.0"
+description = "Real-time AI VTuber backend: STT -> LLM -> TTS with a viseme stream for Three-VRM avatars"
+requires-python = ">=3.11"
+readme = "../README.md"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+local = ["faster-whisper==1.2.1", "ctranslate2>=4.5.0"]
+dev = ["pytest==9.1.1", "pytest-asyncio==1.4.0", "ruff==0.17.1"]
+
+# ---------------------------------------------------------------------------
+#  Linting - run with:  ruff check app tests main.py
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".venv", "models"]
+
+[tool.ruff.lint]
+select = [
+    "E4",   # imports (unused import errors come from F)
+    "E7",   # statements
+    "E9",   # runtime
+    "F",    # pyflakes
+    "I",    # import sorting
+    "B",    # bugbear
+    "UP",   # pyupgrade
+    "C4",   # comprehensions
+    "ASYNC",# async pitfalls
+    "RUF",  # ruff specific
+]
+ignore = [
+    "E501",   # long lines are handled by the formatter
+    "RUF001", # ambiguous unicode (we deliberately use 、 。 ！ ？)
+    "RUF002",
+    "RUF003",
+    "RUF012", # mutable class attributes in dataclasses are fine here
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]          # allow assert False style helpers if needed
+"app/lipsync/*" = ["RUF001", "RUF002", "RUF003"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

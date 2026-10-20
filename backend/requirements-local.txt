@@ -1,0 +1,11 @@
+# ---------------------------------------------------------------------------
+# OPTIONAL: fully local (offline) Speech-To-Text.
+# Install on top of requirements.txt:
+#   pip install -r requirements.txt -r requirements-local.txt
+#
+# faster-whisper needs no ffmpeg (it decodes via PyAV) and runs on CPU or
+# CUDA. First use downloads the model from Hugging Face into ./backend/models.
+# ---------------------------------------------------------------------------
+faster-whisper==1.2.1
+ctranslate2>=4.5.0
+onnxruntime>=1.20.0

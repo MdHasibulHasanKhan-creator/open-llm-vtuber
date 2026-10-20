@@ -1,0 +1,52 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+logs/
+
+# ---- Node / Vite ----
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+*.local
+npm-debug.log*
+yarn-error.log*
+
+# ---- Secrets / local config ----
+# `.env.local` holds this machine's provider/model and is covered by `.env.*`.
+.env
+.env.*
+!.env.example
+# The API key the settings UI writes. Never commit this.
+secrets.json
+backend/secrets.json
+
+# ---- Models (large binaries, download them yourself) ----
+frontend/public/models/*.vrm
+frontend/public/models/*.vrma
+!frontend/public/models/.gitkeep
+backend/models/
+*.onnx
+*.bin
+
+# ---- Runtime state (your own long-term memory) ----
+backend/memory/
+# Persona edits made in the settings UI. The shipped `*.yaml` stays the
+# reference; these are yours (name, greeting, prompt, voice).
+backend/characters/*.user.json
+
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

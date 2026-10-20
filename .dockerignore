@@ -1,0 +1,45 @@
+.git
+.gitignore
+.github
+
+# Never ship local configuration or secrets.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+# The API key the settings UI writes.
+secrets.json
+**/secrets.json
+# Long-term memory is the user's data, not part of the image.
+**/memory/
+**/logs
+# Persona edits are per-machine too; every image gets the shipped .yaml files.
+**/characters/*.user.json
+
+# Python
+**/__pycache__
+**/*.py[cod]
+**/.venv
+**/.pytest_cache
+**/.ruff_cache
+backend/logs
+backend/models
+
+# Node / build output (the image builds the frontend itself)
+**/node_modules
+**/dist
+**/.vite
+frontend/tsconfig.tsbuildinfo
+
+# Large binaries and avatars
+frontend/public/models/*.vrm
+frontend/public/models/*.vrma
+*.onnx
+*.bin
+
+# Editors / OS
+**/.idea
+**/.vscode
+**/.DS_Store
+Thumbs.db

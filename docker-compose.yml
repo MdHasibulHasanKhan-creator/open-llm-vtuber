@@ -1,0 +1,79 @@
+# ---------------------------------------------------------------------------
+#  Optional: run Open VRM VTuber with one command.
+#
+#    docker compose up --build
+#    docker compose exec ollama ollama pull llama3.1:8b   # first run only
+#
+#  Then open http://localhost:8000 - the container serves the UI, /api and /ws
+#  on one port. Microphone access works because "localhost" is a secure context.
+#
+#  This file is a convenience, not the recommended development setup: for
+#  hacking on the code use `scripts/dev.ps1` / `scripts/dev.sh`, which gives you
+#  hot reload and the ability to run the ASR/LLM engines from your own machine.
+#
+#  Using a paid API instead of the local model? Drop the `ollama` service and
+#  set the LLM settings below (or pass the whole lot with `--env-file
+#  backend/.env`, after copying backend/.env.example).
+# ---------------------------------------------------------------------------
+
+services:
+  vtuber:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: open-vrm-vtuber:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # --- server ---------------------------------------------------------
+      VTUBER_SERVER__HOST: 0.0.0.0
+      VTUBER_SERVER__PORT: "8000"
+      VTUBER_SERVER__SERVE_FRONTEND: "true"
+      VTUBER_SERVER__MAX_SESSIONS: "4"
+
+      # --- brain: the bundled Ollama service ------------------------------
+      VTUBER_LLM__PROVIDER: openai
+      VTUBER_LLM__BASE_URL: http://ollama:11434/v1
+      VTUBER_LLM__MODEL: llama3.1:8b
+      VTUBER_LLM__API_KEY: ollama
+
+      # --- voice ----------------------------------------------------------
+      VTUBER_TTS__ENGINE: edge
+      VTUBER_TTS__VOICE: en-US-AriaNeural
+      VTUBER_TTS__FORMAT: pcm_s16le
+
+      # --- ears -----------------------------------------------------------
+      # "browser" needs no model download and no extra image size. Switch to
+      # "local" only after baking requirements-local.txt into the image.
+      VTUBER_ASR__ENGINE: browser
+
+      VTUBER_LOG__LEVEL: INFO
+    depends_on:
+      - ollama
+    # The avatar is served from frontend/dist inside the image; drop your own
+    # .vrm files here to make them appear in the settings drawer.
+    volumes:
+      - ./frontend/public/models:/app/frontend/public/models:ro
+    restart: unless-stopped
+
+  # A local, offline LLM. Comment this service out if you are pointing
+  # VTUBER_LLM__BASE_URL at a paid API or at an Ollama running on the host
+  # (then use http://host.docker.internal:11434/v1 instead).
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    restart: unless-stopped
+    # Uncomment for NVIDIA GPU acceleration (needs the NVIDIA container toolkit).
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  ollama-models:
